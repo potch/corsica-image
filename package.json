@@ -1,6 +1,6 @@
 {
   "name": "corsica-image",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Image formatting plugin for Corsica",
   "main": "index.js",
   "scripts": {
@@ -17,5 +17,8 @@
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/potch/corsica-image/issues"
+  },
+  "dependencies": {
+    "es6-promise": "~0.1.1"
   }
 }
