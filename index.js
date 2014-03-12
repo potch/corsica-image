@@ -34,7 +34,8 @@ module.exports = function (corsica) {
           path: parts.path
         };
         var req = http.get(options, function(res) {
-          var mime = res.headers['content-type'].split('/');
+          var contentType = res.headers['content-type'] || '';
+          var mime = contentType.split('/');
           // if the mime type is of the form 'imgage/{foo}' modify message
           if (mime[0] === 'image') {
             content.type = 'html';
