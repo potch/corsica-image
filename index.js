@@ -6,53 +6,34 @@
  */
 
 var Promise = require('es6-promise').Promise;
-var http = require('http');
-var https = require('https');
-var url = require('url');
+
+var request;
+
 
 module.exports = function (corsica) {
+  request = corsica.request;
+
   corsica.on('content', function(content) {
+    if (!('url' in content)) {
+      return content;
+    }
+
     return new Promise(function(resolve, reject) {
-      // verify message contains a URL
-      if ('url' in content) {
-        var parts = url.parse(content.url);
-
-        // determine whether to use http or https
-        var requester;
-        if (parts.protocol === 'http:') {
-          requester = http;
-        } else if (parts.protocol === 'https:') {
-          requester = https;
-        } else {
-          return content;
+      request.head(content.url, function (error, response, body) {
+        if (error) {
+          resolve(content);
+          return;
         }
-
-        // fetch the resource and check its mime type
-        var options = {
-          hostname: parts.hostname,
-          port: parts.port || 80,
-          path: parts.path
-        };
-        var req = http.get(options, function(res) {
-          var contentType = res.headers['content-type'] || '';
-          var mime = contentType.split('/');
-          // if the mime type is of the form 'imgage/{foo}' modify message
-          if (mime[0] === 'image') {
-            content.type = 'html';
-            // maybe this shouldn't be inline?
-            content.content = '<body style="margin:0;height:100%;background:url(' +
-              content.url +
-              ') no-repeat center #000;background-size:contain;"></body>';
-          }
-          resolve(content);
-          req.abort();
-        });
-        req.on('error', function(e) {
-          resolve(content);
-        });
-      } else {
-        return content;
-      }
+        var contentType = response.headers['content-type'] || '';
+        var mime = contentType.split('/');
+        if (mime[0] === 'image') {
+          content.type = 'html';
+          content.content = '<body style="margin:0;height:100%;background:url(' +
+            content.url +
+            ') no-repeat center #000;background-size:contain;"></body>';
+        }
+        resolve(content);
+      });
     });
   });
 };
