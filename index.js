@@ -12,6 +12,9 @@ var Promise = require('es6-promise').Promise;
 var request;
 var template = '<body style="margin: 0; height: 100%; background: url(%s) no-repeat center %s; background-size: contain;"></body>';
 
+var template = '<body style="margin: 0; height: 100%; background: url(%s) no-repeat center %s; background-size: contain;"></body>';
+
+
 module.exports = function (corsica) {
   request = corsica.request;
 
