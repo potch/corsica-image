@@ -33,7 +33,6 @@ module.exports = function (corsica) {
         if (mime[0] === 'image') {
           content.type = 'html';
           content.content = nodeUtils.format(template, content.url, bgColor);
-          console.log(content.content);
         }
         resolve(content);
       });
