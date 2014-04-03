@@ -2,12 +2,16 @@
  *   detects image MIME-types and presents the image more attractively.
  *
  * Author:
- *    potch
+ *    potch, mythmon
  */
 
+var nodeUtils = require('util');
 var Promise = require('es6-promise').Promise;
 
 var request;
+
+
+var template = '<body style="margin: 0; height: 100%; background: url(%s) no-repeat center %s; background-size: contain;"></body>';
 
 
 module.exports = function (corsica) {
@@ -17,6 +21,8 @@ module.exports = function (corsica) {
     if (!('url' in content)) {
       return content;
     }
+
+    var bgColor = content.bg || '#000';
 
     return new Promise(function(resolve, reject) {
       request.head(content.url, function (error, response, body) {
@@ -28,9 +34,8 @@ module.exports = function (corsica) {
         var mime = contentType.split('/');
         if (mime[0] === 'image') {
           content.type = 'html';
-          content.content = '<body style="margin:0;height:100%;background:url(' +
-            content.url +
-            ') no-repeat center #000;background-size:contain;"></body>';
+          content.content = nodeUtils.format(template, content.url, bgColor);
+          console.log(content.content);
         }
         resolve(content);
       });
